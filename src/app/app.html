@@ -1,0 +1,18 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm sticky-top">
+  <div class="container">
+    <a class="navbar-brand fw-bold" routerLink="/"><i class="bi bi-bag-heart-fill"></i> متجر Angular</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"><span class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse" id="mainNav">
+      <ul class="navbar-nav me-auto gap-lg-2">
+        <li class="nav-item"><a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">الرئيسية</a></li>
+        <li class="nav-item"><a class="nav-link" routerLink="/products" routerLinkActive="active">المنتجات</a></li>
+        <li class="nav-item"><a class="nav-link" routerLink="/favorites" routerLinkActive="active">المفضلة</a></li>
+        @if (store.isAdmin()) {<li class="nav-item"><a class="nav-link" routerLink="/admin" routerLinkActive="active">لوحة التحكم</a></li>}
+      </ul>
+      <a class="btn btn-light btn-sm" routerLink="/cart"><i class="bi bi-cart3"></i> السلة <span class="badge text-bg-danger">{{ cartCount() }}</span></a>
+      @if (store.isAuthenticated()) {<button class="btn btn-outline-light btn-sm ms-2" (click)="store.logout()">خروج</button>} @else {<a class="btn btn-outline-light btn-sm ms-2" routerLink="/login">دخول</a>}
+    </div>
+  </div>
+</nav>
+<main><router-outlet /></main>
+<footer class="bg-dark text-white-50 py-4 mt-5"><div class="container text-center">Luma E-Commerce © 2026</div></footer>

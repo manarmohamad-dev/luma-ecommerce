@@ -1,0 +1,7 @@
+@import 'bootstrap/dist/css/bootstrap.rtl.min.css';
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+
+body { background: #f7f8fc; color: #20263a; }
+.hero { background: linear-gradient(120deg, #2349ae, #6637bd); color: white; }
+.product-image { height: 210px; object-fit: contain; padding: 1rem; background: white; }
+.card { border: 0; box-shadow: 0 .15rem .8rem rgba(27,39,94,.08); }
