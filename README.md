@@ -162,7 +162,3 @@ npm run build
 cd backend
 node --check server.js
 ```
-
-## License
-
-This project is provided for educational use.
