@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://your-api-domain.example.com/api',
+  apiUrl: 'https://luma-ecommerce-production-e2b3.up.railway.app/api',
 };
