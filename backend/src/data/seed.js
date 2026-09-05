@@ -11,11 +11,17 @@ const products = [
 ];
 
 (async () => {
+  const adminPassword = process.env.SEED_ADMIN_PASSWORD;
+
+  if (!adminPassword || adminPassword.length < 8) {
+    throw new Error('SEED_ADMIN_PASSWORD must be set to at least 8 characters before seeding');
+  }
+
   await connectDatabase();
   await Product.deleteMany();
   await User.deleteMany();
   await Product.insertMany(products);
-  await User.create({ name: 'Administrator', email: 'admin@example.com', password: 'Admin12345', role: 'admin' });
+  await User.create({ name: 'Administrator', email: 'admin@example.com', password: adminPassword, role: 'admin' });
   console.log('Database seeded');
   process.exit(0);
 })().catch((error) => { console.error(error.message); process.exit(1); });

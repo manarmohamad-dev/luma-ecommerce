@@ -1,164 +1,170 @@
-# Luma
+# Luma E-Commerce
 
-Luma is a full-stack e-commerce course project with an Angular storefront and a Node.js, Express, and MongoDB REST API. It includes product discovery, authentication, a shopping cart, favorites, and admin product and user management.
+Luma is a full-stack portfolio project that demonstrates a modern Angular storefront backed by a Node.js, Express, and MongoDB REST API. It covers product discovery, user authentication, customer shopping features, and role-protected administration in one end-to-end application.
 
-## Technology
+## Live Demo
 
-- Angular 20
-- Node.js and Express 5
-- MongoDB and Mongoose
-- JWT and bcryptjs
-- Bootstrap 5 and Bootstrap Icons
-- express-validator, Helmet, CORS, express-rate-limit, Morgan, and Winston
+- Frontend: [luma-ecommerce-roan.vercel.app](https://luma-ecommerce-roan.vercel.app/)
+- Backend API: deployed separately on Railway and consumed by the production frontend
 
-## Project Structure
+The deployed services may take a short time to respond after inactivity. No private credentials or infrastructure secrets are included in this repository.
+
+## Features
+
+### Storefront
+
+- Browse, search, and filter products
+- View product details
+- Create an account and sign in
+- Maintain a persistent shopping cart
+- Add or remove favorite products
+- View and update a customer profile
+
+### Administration
+
+- Role-protected admin routes
+- Create, update, and delete products
+- Browse registered users
+- Ban or reactivate user accounts
+
+### API and security
+
+- RESTful Express API
+- MongoDB persistence with Mongoose
+- Password hashing with bcryptjs
+- JWT authentication and authorization middleware
+- Request validation with express-validator
+- Helmet security headers, restricted CORS, and API rate limiting
+- Centralized error handling and structured logging
+
+## Tech Stack
+
+| Layer | Technologies |
+| --- | --- |
+| Frontend | Angular 20, TypeScript, RxJS, Bootstrap 5 |
+| Backend | Node.js, Express 5, JavaScript |
+| Database | MongoDB Atlas, Mongoose |
+| Authentication | JWT, bcryptjs |
+| Validation and security | express-validator, Helmet, CORS, express-rate-limit |
+| Deployment | Vercel, Railway |
+
+## Architecture
+
+```text
+Angular storefront
+       |
+       | HTTPS / JSON REST requests
+       v
+Node.js + Express API
+       |
+       | Mongoose
+       v
+MongoDB Atlas
+```
+
+The Angular application separates routing, pages, guards, and shared data services. The backend separates configuration, models, controllers, services, routes, validation, authorization, and error middleware.
 
 ```text
 Luma/
-├── src/                 Angular application
-├── public/              Static product assets
-├── backend/
-│   ├── src/
-│   │   ├── config/      Database configuration
-│   │   ├── controllers/ Request handlers
-│   │   ├── models/      Mongoose schemas
-│   │   ├── routes/      REST endpoints
-│   │   ├── middlewares/ Authentication, authorization, validation, errors
-│   │   ├── services/    Product query logic
-│   │   ├── utils/       Logging
-│   │   └── data/        Seed data
-│   ├── .env.example
-│   └── server.js
-└── package.json
+├── src/
+│   ├── app/
+│   │   ├── core/          # Store service and route guards
+│   │   └── pages/         # Storefront and administration pages
+│   └── environments/      # API configuration
+├── public/                # Product assets
+└── backend/
+    └── src/
+        ├── config/        # Database configuration
+        ├── controllers/   # HTTP request handlers
+        ├── data/          # Development seed data
+        ├── middlewares/   # Auth, roles, validation, and errors
+        ├── models/        # Mongoose schemas
+        ├── routes/        # REST endpoints
+        ├── services/      # Product query logic
+        └── utils/         # Logging
 ```
+
+## API Overview
+
+### Authentication
+
+| Method | Endpoint | Access |
+| --- | --- | --- |
+| POST | `/api/auth/register` | Public |
+| POST | `/api/auth/login` | Public |
+
+### Products
+
+| Method | Endpoint | Access |
+| --- | --- | --- |
+| GET | `/api/products` | Public |
+| GET | `/api/products/:id` | Public |
+| POST | `/api/products` | Admin |
+| PATCH | `/api/products/:id` | Admin |
+| DELETE | `/api/products/:id` | Admin |
+
+### Users, cart, and favorites
+
+| Method | Endpoint | Access |
+| --- | --- | --- |
+| GET / PATCH | `/api/users/profile` | Authenticated user |
+| GET / PUT | `/api/users/cart` | Authenticated user |
+| DELETE | `/api/users/cart/:productId` | Authenticated user |
+| GET | `/api/users/favorites` | Authenticated user |
+| POST | `/api/users/favorites/:productId` | Authenticated user |
+| GET | `/api/users` | Admin |
+| PATCH | `/api/users/:id/ban` | Admin |
+
+Protected endpoints require a valid bearer token. The backend remains authoritative for role and account-status checks.
 
 ## Local Setup
 
 ### Prerequisites
 
 - Node.js 20 or later
-- A MongoDB Atlas cluster (or a local MongoDB instance for development)
+- npm
+- MongoDB Atlas or a local MongoDB instance
 
 ### Backend
 
 ```bash
 cd backend
-cp .env.example .env
 npm install
-npm run seed
+cp .env.example .env
 npm run dev
 ```
 
-The API starts at `http://localhost:5000`.
+Configure `.env` using the placeholders in `backend/.env.example`. Never commit real credentials.
+
+Set `SEED_ADMIN_PASSWORD` to a development-only password of at least eight characters before running the optional seed command. Do not reuse a personal or production password.
 
 ### Frontend
 
-In a second terminal:
+From the repository root:
 
 ```bash
 npm install
 npm start
 ```
 
-Open `http://localhost:4200`.
+The development frontend runs at `http://localhost:4200` and communicates with the configured backend API.
 
-The development frontend uses `http://localhost:5000/api` by default. The production build uses the safe placeholder in `src/environments/environment.production.ts`; replace that placeholder with the deployed backend API URL before building for production.
+## Verification
 
-## Environment Variables
-
-Create `backend/.env` from `backend/.env.example`.
-
-| Variable | Description |
-| --- | --- |
-| `PORT` | API port, default `5000` |
-| `NODE_ENV` | Runtime environment |
-| `MONGO_URI` | MongoDB connection string |
-| `JWT_SECRET` | Long, unique secret used to sign tokens |
-| `JWT_EXPIRES_IN` | JWT lifetime, for example `7d` |
-| `CLIENT_URL` | Allowed frontend origin |
-
-Never commit `backend/.env`. For deployment, set all of these values in the hosting provider's environment-variable settings rather than in source files.
-
-## Deployment Architecture
-
-Deploy the Angular frontend and Node/Express backend as separate services. The frontend calls the backend API URL configured in its production environment file, while the backend connects to MongoDB Atlas using `MONGO_URI`. Set `CLIENT_URL` to the deployed frontend origin so CORS permits that application.
-
-Build the frontend with:
+Create a production frontend bundle with:
 
 ```bash
 npm run build
 ```
 
-Start the backend in a production environment with:
+The repository does not currently include an automated test suite, so no automated test coverage is claimed. Authentication, cart, favorites, product management, and responsive behavior should be verified before each release.
 
-```bash
-cd backend
-npm start
-```
+## Development Seed Data
 
-## Seed Data
+The backend includes a development-only seed command. It replaces product and user records in the selected database and must only be used with an explicitly designated development database.
 
-`npm run seed` resets the local database and inserts four sample products and one administrator account.
+No reusable password or production administrator credential is published in this README.
 
-Use this command only for a development or explicitly designated seed database: it clears the application's products and users before inserting seed records.
+## Project Status
 
-| Role | Email | Password |
-| --- | --- | --- |
-| Admin | `admin@example.com` | `Admin12345` |
-
-These credentials are for local development only. Change or remove them before any public deployment.
-
-## API Endpoints
-
-### Authentication
-
-| Method | Endpoint | Access | Description |
-| --- | --- | --- |
-| POST | `/api/auth/register` | Public | Register a user |
-| POST | `/api/auth/login` | Public | Login and receive a JWT |
-
-### Products
-
-| Method | Endpoint | Access | Description |
-| --- | --- | --- |
-| GET | `/api/products` | Public | List products with optional `search`, `category`, `page`, and `limit` queries |
-| GET | `/api/products/:id` | Public | Get one product |
-| POST | `/api/products` | Admin | Create a product |
-| PATCH | `/api/products/:id` | Admin | Update a product |
-| DELETE | `/api/products/:id` | Admin | Delete a product |
-
-### Users, Cart, and Favorites
-
-| Method | Endpoint | Access | Description |
-| --- | --- | --- |
-| GET | `/api/users/profile` | User | Get profile |
-| PATCH | `/api/users/profile` | User | Update name or email |
-| GET | `/api/users/cart` | User | Get cart |
-| PUT | `/api/users/cart` | User | Add or update a cart item |
-| DELETE | `/api/users/cart/:productId` | User | Remove a cart item |
-| GET | `/api/users/favorites` | User | Get favorites |
-| POST | `/api/users/favorites/:productId` | User | Add or remove a favorite |
-| GET | `/api/users` | Admin | List users |
-| PATCH | `/api/users/:id/ban` | Admin | Ban or unban a user |
-
-Authenticated routes require `Authorization: Bearer <token>`.
-
-## Security and Reliability
-
-- Passwords are hashed with bcryptjs.
-- JWT middleware authenticates protected routes.
-- Role middleware restricts admin operations.
-- express-validator checks request body, route parameters, and query values.
-- Helmet sets security headers.
-- CORS restricts browser access to the configured client origin.
-- Rate limiting protects the API from repeated requests.
-- Morgan and Winston write request and error logs locally.
-- Global error handling returns a consistent error response shape.
-
-## Validation
-
-```bash
-npm run build
-cd backend
-node --check server.js
-```
+This project is maintained as a portfolio demonstration of full-stack development with Angular, Express, and MongoDB. It is not presented as a production retail service.
